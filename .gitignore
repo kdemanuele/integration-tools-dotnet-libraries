@@ -1,0 +1,9 @@
+**/*.suo
+**/*.user
+**/bin
+**/obj
+.vs
+.vscode
+**/*.cache
+**/TestResults
+coveragereport/*

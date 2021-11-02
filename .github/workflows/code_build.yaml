@@ -1,0 +1,105 @@
+name: Build Library
+
+on:
+  push:
+    branches:
+    - feature/*
+    - fixes/*
+    - develop
+    - main
+  pull_request:
+    branches:
+    - develop
+    - main
+
+env:
+  DOTNET_VERSION: '5.0.x'
+
+jobs:
+  test_libraries:
+    name: Testing of Library Code
+    runs-on: windows-latest
+    steps:
+      - name: Checking out files
+        uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install dependencies
+        working-directory: ./Libraries
+        run: dotnet restore
+      - name: Test the Code
+        working-directory: ./Libraries
+        run: dotnet test  --no-restore --results-directory "TestResults" --collect:"XPlat Code Coverage" --logger trx
+      - name: Generate Coverage Report
+        working-directory: ./Libraries
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"**\coverage.cobertura.xml" -targetdir:"..\coveragereport" -reporttypes:"MarkdownSummary;Badges"
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-results
+          path: ./Libraries/TestResults
+        if: ${{ always() }}
+      - name: Upload dotnet coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-summary.md
+          path: ./coveragereport/Summary.md
+        if: ${{ always() }}
+  build_libraries:
+    name: Building of Library Code
+    runs-on: windows-latest
+    needs: [ test_libraries, analyze ]
+    steps:
+      - name: Checking out files
+        uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install dependencies
+        working-directory: ./Libraries
+        run: dotnet restore
+      - name: Performing Build of Libraries
+        working-directory: ./Libraries
+        run: dotnet build /p:Configuration=Release
+      - name: Upload the libraries for projects without performance measure
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: SimpleIntegration
+          path: ./Libraries/src/SimpleIntegration.Core/bin/Release/net5.0/*.*
+      - name: Performing Build of Libraries with Performance
+        working-directory: ./Libraries
+        run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release  
+      - name: Upload the performance enabled libraries
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: SimpleIntegration_With_Performance
+          path: ./Libraries/src/SimpleIntegration.Core/bin/Release/net5.0/*.*
+
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [  'csharp' ]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+    - run: |
+        cd Libraries
+        dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
