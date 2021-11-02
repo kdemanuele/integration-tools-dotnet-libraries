@@ -33,7 +33,7 @@ jobs:
       - name: Generate Coverage Report
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"**\coverage.cobertura.xml" -targetdir:"..\coveragereport" -reporttypes:"MarkdownSummary"
+          reportgenerator -reports:"**\coverage.cobertura.xml" -targetdir:".\coveragereport" -reporttypes:"MarkdownSummary"
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
@@ -67,7 +67,6 @@ jobs:
           name: IntegrationTool
           path: ./src/IntegrationTool.Core/bin/Release/net5.0/*.*
       - name: Performing Build of Libraries with Performance
-        working-directory: ./Libraries
         run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release  
       - name: Upload the performance enabled libraries
         uses: actions/upload-artifact@v2.2.2
