@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>IntegrationTool.Validation</PackageId>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Karlston D'Emanuele</Authors>
+    <Company />
+    <RepositoryUrl>https://github.com/kdemanuele/integration-tools-dotnet-libraries</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>Provides an implementation of a generalized object validation process that utilised rules defining the expected object definition..</Description>
+    <PackageProjectUrl>https://kdemanuele.github.io/integration-tools-documentation/</PackageProjectUrl>
+    <PackageReleaseNotes># v1.0.0
+Provides basic validation logic which checks for: Required Fields, Pattern Matching (like Email format) or the ability to define custom validation logic</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

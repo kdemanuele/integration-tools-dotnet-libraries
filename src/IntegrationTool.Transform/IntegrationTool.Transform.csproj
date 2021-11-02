@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <AnalysisLevel>latest</AnalysisLevel>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>IntegrationTool.Transform</PackageId>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Karlston D'Emanuele</Authors>
+    <Company />
+    <RepositoryUrl>https://github.com/kdemanuele/integration-tools-dotnet-libraries</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>Provides an implementation of a generalized object transformation process that utilised rules defining the mappings.</Description>
+    <PackageProjectUrl>https://kdemanuele.github.io/integration-tools-documentation/</PackageProjectUrl>
+    <PackageReleaseNotes># v1.0.0
+Provides basic transformation logic which can convert an object by: leaving the field values unchanged, changing the field type, using value-set for data value mappings or using custom logic</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

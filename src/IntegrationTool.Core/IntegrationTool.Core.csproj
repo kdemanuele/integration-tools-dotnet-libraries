@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>IntegrationTool.Core</PackageId>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Karlston D'Emanuele</Authors>
+    <Company />
+    <RepositoryUrl>https://github.com/kdemanuele/integration-tools-dotnet-libraries</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>The base library defining the interfaces and common utilities required by the IntegrationTool.Transform and IntegrationTool.Validation. The library can be used to create different implementations fo the transformation and validation libraries or to create extension libraries.</Description>
+    <PackageProjectUrl>https://kdemanuele.github.io/integration-tools-documentation/</PackageProjectUrl>
+    <PackageReleaseNotes># v1.0.0
+Provides Rule definition class and interfaces for transformation and validation logic</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

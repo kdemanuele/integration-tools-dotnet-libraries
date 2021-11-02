@@ -1,0 +1,41 @@
+name: Release Libraries
+
+on:
+  push:
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+  DOTNET_VERSION: '5.0.x'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Verify commit exists in origin/main
+      run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+        git branch --remote --contains | grep origin/main
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+    - name: Setup .NET Core SDK ${{ env.DOTNET_VERSION }}
+      uses: actions/setup-dotnet@v1.7.2
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Performing Build of Libraries
+      run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release
+    - name: Pack
+      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
+    - name: Push IntegrationTool Libraries
+      run: |
+        dotnet nuget push IntegrationTool.Core.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${GITHUB_TOKEN}
+        dotnet nuget push IntegrationTool.Transform.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${GITHUB_TOKEN}
+        dotnet nuget push IntegrationTool.Validate.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${GITHUB_TOKEN}
+      env:
+        GITHUB_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
+
+# Adopted from: https://acraven.medium.com/a-nuget-package-workflow-using-github-actions-7da8c6557863
