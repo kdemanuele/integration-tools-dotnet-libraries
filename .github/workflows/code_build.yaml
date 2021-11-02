@@ -27,26 +27,23 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Install dependencies
-        working-directory: ./Libraries
         run: dotnet restore
       - name: Test the Code
-        working-directory: ./Libraries
         run: dotnet test  --no-restore --results-directory "TestResults" --collect:"XPlat Code Coverage" --logger trx
       - name: Generate Coverage Report
-        working-directory: ./Libraries
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"**\coverage.cobertura.xml" -targetdir:"..\coveragereport" -reporttypes:"MarkdownSummary;Badges"
+          reportgenerator -reports:"**\coverage.cobertura.xml" -targetdir:"..\coveragereport" -reporttypes:"MarkdownSummary"
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
           name: unit-test-results
-          path: ./Libraries/TestResults
+          path: ./TestResults
         if: ${{ always() }}
       - name: Upload dotnet coverage results
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-summary.md
+          name: coverage-summary
           path: ./coveragereport/Summary.md
         if: ${{ always() }}
   build_libraries:
@@ -61,24 +58,22 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Install dependencies
-        working-directory: ./Libraries
         run: dotnet restore
       - name: Performing Build of Libraries
-        working-directory: ./Libraries
         run: dotnet build /p:Configuration=Release
       - name: Upload the libraries for projects without performance measure
         uses: actions/upload-artifact@v2.2.2
         with:
-          name: SimpleIntegration
-          path: ./Libraries/src/SimpleIntegration.Core/bin/Release/net5.0/*.*
+          name: IntegrationTool
+          path: ./src/IntegrationTool.Core/bin/Release/net5.0/*.*
       - name: Performing Build of Libraries with Performance
         working-directory: ./Libraries
         run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release  
       - name: Upload the performance enabled libraries
         uses: actions/upload-artifact@v2.2.2
         with:
-          name: SimpleIntegration_With_Performance
-          path: ./Libraries/src/SimpleIntegration.Core/bin/Release/net5.0/*.*
+          name: IntegrationTool_With_Performance
+          path: ./src/IntegrationTool.Core/bin/Release/net5.0/*.*
 
   analyze:
     name: Analyze
