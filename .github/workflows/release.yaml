@@ -32,9 +32,9 @@ jobs:
       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
     - name: Push IntegrationTool Libraries
       run: |
-        dotnet nuget push IntegrationTool.Core.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${NUGET_GITHUB_TOKEN}
-        dotnet nuget push IntegrationTool.Transform.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${NUGET_GITHUB_TOKEN}
-        dotnet nuget push IntegrationTool.Validate.${VERSION}.nupkg --source https://nuget.pkg.github.com/kdemanuele/index.json --api-key ${NUGET_GITHUB_TOKEN}
+        dotnet nuget push IntegrationTool.Core.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_GITHUB_TOKEN}
+        dotnet nuget push IntegrationTool.Transform.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_GITHUB_TOKEN}
+        dotnet nuget push IntegrationTool.Validate.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_GITHUB_TOKEN}
       env:
         NUGET_GITHUB_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
 
