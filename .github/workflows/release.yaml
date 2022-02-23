@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Performing Build of Libraries
-      run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release
+      run: dotnet build /p:DefineConstants=TRACE%3BPERFTEST /p:Configuration=Release /p:Version=${VERSION}
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
     - name: Push IntegrationTool Libraries
@@ -37,5 +37,10 @@ jobs:
         dotnet nuget push IntegrationTool.Validation.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_GITHUB_TOKEN} --skip-duplicate
       env:
         NUGET_GITHUB_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
+    - name: Upload dotnet coverage results
+      uses: actions/upload-artifact@v2
+      with:
+        name: NuGet Packages
+        path: ./*.nupkg
 
 # Adopted from: https://acraven.medium.com/a-nuget-package-workflow-using-github-actions-7da8c6557863
